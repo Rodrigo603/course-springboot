@@ -5,13 +5,17 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -35,6 +39,9 @@ public class Product implements Serializable {
 	
 	private Set<Category> categories = new HashSet<>(); // Set instead of List because the product can't have two identical categories 
 
+	@OneToMany(mappedBy = "id.product", fetch = FetchType.EAGER)
+	private Set<OrderItem> items = new HashSet<>();
+	
 	public Product() {
 	}
 	
@@ -87,6 +94,14 @@ public class Product implements Serializable {
 		this.imgUrl = imgUrl;
 	}
 
+	@JsonIgnore
+	public Set<Order> getOrders() {
+		Set<Order> set = new HashSet<>();
+		for (OrderItem x : items) {
+			set.add(x.getOrder());
+		}
+		return set;
+	}
 	
 	@Override
 	public int hashCode() {
