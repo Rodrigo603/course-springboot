@@ -2,7 +2,7 @@ package com.rjdo.course.config;
 
 import java.time.Instant;
 import java.util.Arrays;
-
+import com.rjdo.course.resources.OrderResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Profile;
 import com.rjdo.course.entities.Category;
 import com.rjdo.course.entities.Order;
 import com.rjdo.course.entities.OrderItem;
+import com.rjdo.course.entities.Payment;
 import com.rjdo.course.entities.Product;
 import com.rjdo.course.entities.User;
 import com.rjdo.course.entities.enums.OrderStatus;
@@ -23,6 +24,8 @@ import com.rjdo.course.repositories.UserRepository;
 @Configuration
 @Profile("test")
 public class TestConfig implements CommandLineRunner{
+
+    private final OrderResource orderResource;
 	
 	@Autowired
 	private UserRepository userRepository;
@@ -38,6 +41,10 @@ public class TestConfig implements CommandLineRunner{
 	
 	@Autowired
 	private OrderItemRepository orderItemRepository;
+
+    TestConfig(OrderResource orderResource) {
+        this.orderResource = orderResource;
+    }
 	
 	@Override
 	public void run(String... args) throws Exception {
@@ -85,6 +92,12 @@ public class TestConfig implements CommandLineRunner{
 		
 		orderItemRepository.saveAll(Arrays.asList(oi1,oi2,oi3,oi4));
 		
+		
+		Payment pay1 = new Payment(null, Instant.parse("2019-06-20T21:53:07Z"), o1);
+		
+		o1.setPayment(pay1);
+		
+		orderRepository.save(o1);
 		
 	}
 	
