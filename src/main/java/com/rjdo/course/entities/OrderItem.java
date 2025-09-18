@@ -19,8 +19,8 @@ public class OrderItem implements Serializable {
 
 	@EmbeddedId
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	private OrderItemPK id = new OrderItemPK(); //Primary key types had to be instantiated
-	
+	private OrderItemPK id = new OrderItemPK(); // Primary key types had to be instantiated
+
 	private Integer quantity;
 	private Double price;
 
@@ -33,6 +33,7 @@ public class OrderItem implements Serializable {
 		this.quantity = quantity;
 		this.price = price;
 	}
+
 	@JsonIgnore
 	public Order getOrder() {
 		return id.getOrder();
@@ -41,7 +42,7 @@ public class OrderItem implements Serializable {
 	public void setOrder(Order order) {
 		id.setOrder(order);
 	}
-	
+
 	public Product getProduct() {
 		return id.getProduct();
 	}
@@ -49,6 +50,7 @@ public class OrderItem implements Serializable {
 	public void setProduct(Product product) {
 		id.setProduct(product);
 	}
+
 	public OrderItemPK getId() {
 		return id;
 	}
@@ -73,6 +75,10 @@ public class OrderItem implements Serializable {
 		this.price = price;
 	}
 
+	public Double getSubTotal() {
+		return price * quantity;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -89,7 +95,4 @@ public class OrderItem implements Serializable {
 		OrderItem other = (OrderItem) obj;
 		return Objects.equals(id, other.id);
 	}
-	
-	
-	
 }
