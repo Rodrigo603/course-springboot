@@ -4,38 +4,48 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.rjdo.course.entities.User;
 import com.rjdo.course.repositories.UserRepository;
+import com.rjdo.course.services.exceptions.DatabaseException;
 import com.rjdo.course.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class UserService {
-	
+
 	@Autowired
 	private UserRepository repository;
-	
+
 	public List<User> findAll() {
 		return repository.findAll();
 	}
-	
+
 	public User findById(Long id) {
-		Optional<User> obj = repository.findById(id); 
+		Optional<User> obj = repository.findById(id);
 		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
-	
+
 	public User insert(User user) {
 		return repository.save(user);
 	}
-	
+
 	public void delete(Long id) {
-		repository.deleteById(id);
-	}
-	
+	    try {
+	        if (repository.existsById(id)) {
+	            repository.deleteById(id);			
+	        } else {				
+	            throw new ResourceNotFoundException(id);			
+	        }		
+	    } catch (DataIntegrityViolationException e) {			
+	        throw new DatabaseException(e.getMessage());		
+	    }	
+	} 
+
 	public User updtate(Long id, User user) {
 		User entity = repository.getReferenceById(id);
-		updateData(entity,user);
+		updateData(entity, user);
 		return repository.save(entity);
 	}
 
